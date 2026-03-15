@@ -46,7 +46,6 @@ body::before {
   pointer-events:none; z-index:0;
 }
 
-/* glow blobs */
 body::after {
   content:'';
   position:fixed; inset:0;
@@ -58,7 +57,6 @@ body::after {
 
 .wrap { position:relative; z-index:1; max-width:1060px; margin:0 auto; padding:24px 20px 40px; }
 
-/* ── TOP BAR ── */
 .topbar {
   display:flex; justify-content:space-between; align-items:center;
   margin-bottom:26px;
@@ -94,7 +92,6 @@ body::after {
 }
 #clock { color:var(--lime); font-size:12px; letter-spacing:0.06em; }
 
-/* ── ALERT BANNER ── */
 .alert-banner {
   background: var(--red-dim);
   border:1px solid var(--red);
@@ -136,7 +133,6 @@ body::after {
 }
 .alert-icon { font-size:26px; flex-shrink:0; padding-top:2px; }
 
-/* ── SENSOR CARDS ── */
 .sensor-grid {
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -186,16 +182,12 @@ body::after {
   letter-spacing:-2px;
   transition: color 0.5s ease;
 }
-/* default normal = white; JS overrides per reading */
 .s-card .s-value { color: #00E5A0; }
 
 .s-right { padding-bottom:6px; }
 .s-unit { font-size:11px; color:var(--muted); font-family:var(--mono); margin-bottom:4px; }
 .s-sub  { font-size:11px; color:var(--muted); line-height:1.5; }
 
-.s-spark { height:40px; margin-top:12px; opacity:0.75; width:100%; }
-
-/* ── SECTION LABEL ── */
 .sec-label {
   font-family:var(--mono); font-size:10px;
   letter-spacing:0.18em; color:var(--violet);
@@ -204,7 +196,6 @@ body::after {
 }
 .sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
 
-/* ── CHARTS ── */
 .chart-row {
   display:grid; grid-template-columns:1fr 1fr;
   gap:14px; margin-bottom:22px;
@@ -231,7 +222,6 @@ body::after {
 .c-air   { color:var(--violet); }
 .c-noise { color:var(--lime); }
 
-/* ── AI PANEL ── */
 .ai-panel {
   background:var(--surface);
   border:1px solid var(--border);
@@ -292,7 +282,6 @@ body::after {
 .ai-block p em     { color:var(--amber); font-style:normal; }
 .ai-block p b      { color:var(--lime); font-weight:600; }
 
-/* reduce tips */
 .tip-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-top:2px; }
 .tip-list li {
   font-size:12px; color:#9BB4D0; line-height:1.5;
@@ -304,7 +293,6 @@ body::after {
   color:var(--violet); font-weight:700;
 }
 
-/* ── HISTORY TABLE ── */
 .history-box {
   background:var(--surface);
   border:1px solid var(--border);
@@ -333,9 +321,8 @@ body::after {
 }
 .tag-good { background:rgba(168,255,62,0.1);  color:var(--lime); }
 .tag-mod  { background:rgba(255,203,71,0.1);  color:var(--amber); }
-.tag-bad  { background:var(--red-dim);          color:var(--red); }
+.tag-bad  { background:var(--red-dim); color:var(--red); }
 
-/* ── FOOTER ── */
 footer {
   border-top:1px solid var(--border);
   padding-top:16px;
@@ -358,7 +345,6 @@ footer strong { color:var(--violet); }
 <body>
 <div class="wrap">
 
-  <!-- ── TOP BAR ── -->
   <div class="topbar">
     <div class="brand">
       <div class="brand-shield">🛡</div>
@@ -373,7 +359,6 @@ footer strong { color:var(--violet); }
     </div>
   </div>
 
-  <!-- ── ALERT BANNER ── -->
   <div class="alert-banner hidden" id="alertBanner">
     <div class="alert-icon">🚨</div>
     <div class="alert-left">
@@ -386,7 +371,6 @@ footer strong { color:var(--violet); }
     </div>
   </div>
 
-  <!-- ── SENSOR CARDS ── -->
   <div class="sec-label">Live Sensor Readings</div>
   <div class="sensor-grid">
 
@@ -436,7 +420,6 @@ footer strong { color:var(--violet); }
 
   </div>
 
-  <!-- ── 24HR TREND CHARTS ── -->
   <div class="sec-label">24-Hour Trends</div>
   <div class="chart-row">
     <div class="chart-box">
@@ -455,7 +438,6 @@ footer strong { color:var(--violet); }
     </div>
   </div>
 
-  <!-- ── AI ANALYSIS ── -->
   <div class="sec-label">CityGuard AI Analysis</div>
   <div class="ai-panel">
     <div class="ai-header">
@@ -486,7 +468,6 @@ footer strong { color:var(--violet); }
     </div>
   </div>
 
-  <!-- ── HISTORY LOG ── -->
   <div class="sec-label">Sensor History Log</div>
   <div class="history-box">
     <table class="hist-table">
@@ -513,7 +494,6 @@ footer strong { color:var(--violet); }
 </div>
 
 <script>
-// ── Verify libraries loaded correctly ──
 if(typeof mqtt === 'undefined'){
   console.error('[CityGuard] ERROR: mqtt.min.js did not load. Check script tag or try local copy.');
 } else {
@@ -525,28 +505,30 @@ if(typeof Chart === 'undefined'){
   console.log('[CityGuard] Chart.js loaded successfully ✓');
 }
 
-// ── Clock ──
 function tickClock(){
   const d = new Date();
   document.getElementById('clock').textContent =
     d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'})
     + ' · ' + d.toLocaleTimeString('en-GB');
 }
-tickClock(); setInterval(tickClock, 1000);
+tickClock();
+setInterval(tickClock, 1000);
 
 const HOURS = Array.from({length:24},(_,i)=>String(i).padStart(2,'0')+':00');
 
-// ── 24hr Baseline Data ──
 let aqiHist   = [88,78,70,65,72,98,125,142,136,128,118,110,105,112,108,100,95,88,82,78,75,72,70,72];
 let noiseHist = [42,38,35,34,38,55,68,75,72,70,65,62,60,65,68,72,70,65,60,55,52,50,48,54];
 let tempHist  = [26,25,24,24,25,27,29,31,32,33,33,32,31,31,30,30,29,29,28,28,27,27,26,28];
 let humHist   = [70,72,73,74,72,68,64,60,58,57,56,58,60,61,62,63,64,64,65,65,66,66,67,62];
 
-// ── Live state ──
 let cur = { aqi:72, noise:54, temp:28, hum:62 };
-let sparks = { aqi:[...aqiHist.slice(-20)], noise:[...noiseHist.slice(-20)], temp:[...tempHist.slice(-20)], hum:[...humHist.slice(-20)] };
+let sparks = {
+  aqi:[...aqiHist.slice(-20)],
+  noise:[...noiseHist.slice(-20)],
+  temp:[...tempHist.slice(-20)],
+  hum:[...humHist.slice(-20)]
+};
 
-// ── Level classifiers ──
 function aqiLevel(v){
   if(v<=50)  return {label:'GOOD',     cls:'live-ok',   desc:'Clean — safe for all',           danger:false, act:null};
   if(v<=100) return {label:'MODERATE', cls:'live-warn', desc:'Acceptable for most',             danger:false, act:null};
@@ -575,96 +557,115 @@ function humLevel(v){
   return           {label:'HIGH',   cls:'live-bad',  desc:'Very humid — mould risk'};
 }
 
-// ── Render ──
 function render(aq, ns, tp, hm){
   const al = aqiLevel(aq);
   const nl = noiseLevel(ns);
   const tl = tempLevel(tp);
   const hl = humLevel(hm);
 
-  // Values
-  ['aqi-val','aqi-now','ai-aqi-live'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=aq; });
-  ['noise-val','noise-now','ai-noise-live'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=ns; });
+  ['aqi-val','aqi-now','ai-aqi-live'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=aq;
+  });
+  ['noise-val','noise-now','ai-noise-live'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=ns;
+  });
   document.getElementById('temp-val').textContent = tp;
   document.getElementById('hum-val').textContent  = hm;
 
-  // Value colors: normal=white, caution/moderate=yellow, loud/warm=orange, danger=red
   const levelColor = (cls) => {
     if(cls === 'live-bad')  return '#FF3D5A';
     if(cls === 'live-bad2') return '#FF8C00';
     if(cls === 'live-warn') return '#FFCB47';
     return '#00E5A0';
   };
+
   document.getElementById('aqi-val').style.color   = levelColor(al.cls);
   document.getElementById('noise-val').style.color = levelColor(nl.cls);
   document.getElementById('temp-val').style.color  = levelColor(tl.cls);
   document.getElementById('hum-val').style.color   = levelColor(hl.cls);
 
-  // Statuses
-  document.getElementById('aqi-status').textContent   = al.label; document.getElementById('aqi-status').className   = 's-live '+al.cls;
-  document.getElementById('noise-status').textContent = nl.label; document.getElementById('noise-status').className = 's-live '+nl.cls;
-  document.getElementById('temp-status').textContent  = tl.label; document.getElementById('temp-status').className  = 's-live '+tl.cls;
-  document.getElementById('hum-status').textContent   = hl.label; document.getElementById('hum-status').className   = 's-live '+hl.cls;
+  document.getElementById('aqi-status').textContent   = al.label;
+  document.getElementById('aqi-status').className     = 's-live '+al.cls;
+
+  document.getElementById('noise-status').textContent = nl.label;
+  document.getElementById('noise-status').className   = 's-live '+nl.cls;
+
+  document.getElementById('temp-status').textContent  = tl.label;
+  document.getElementById('temp-status').className    = 's-live '+tl.cls;
+
+  document.getElementById('hum-status').textContent   = hl.label;
+  document.getElementById('hum-status').className     = 's-live '+hl.cls;
 
   document.getElementById('aqi-desc').textContent   = al.desc;
   document.getElementById('noise-desc').textContent = nl.desc;
   document.getElementById('temp-desc').textContent  = tl.desc;
   document.getElementById('hum-desc').textContent   = hl.desc;
 
-  // Danger borders
-  document.getElementById('card-aqi').classList.toggle('danger',   !!al.danger);
+  document.getElementById('card-aqi').classList.toggle('danger', !!al.danger);
   document.getElementById('card-noise').classList.toggle('danger', !!nl.danger);
 
-  // Alert
   const banner = document.getElementById('alertBanner');
   const anyDanger = al.danger || nl.danger;
   if(anyDanger){
     banner.classList.remove('hidden');
-    let msgs=[], actions=[];
-    if(al.danger){ msgs.push(`Air Quality at AQI ${aq} — ${al.desc}`); if(al.act) al.act.split('·').forEach(a=>actions.push(a.trim())); }
-    if(nl.danger){ msgs.push(`Noise at ${ns} dB — ${nl.desc}`); if(nl.act) nl.act.split('·').forEach(a=>actions.push(a.trim())); }
+    let msgs = [];
+    let actions = [];
+
+    if(al.danger){
+      msgs.push(`Air Quality at AQI ${aq} — ${al.desc}`);
+      if(al.act) al.act.split('·').forEach(a=>actions.push(a.trim()));
+    }
+    if(nl.danger){
+      msgs.push(`Noise at ${ns} dB — ${nl.desc}`);
+      if(nl.act) nl.act.split('·').forEach(a=>actions.push(a.trim()));
+    }
+
     document.getElementById('alertMsg').textContent = msgs.join('  ·  ');
-    document.getElementById('alertActions').innerHTML = [...new Set(actions)].map(a=>`<span class="act-pill">⚡ ${a}</span>`).join('');
+    document.getElementById('alertActions').innerHTML =
+      [...new Set(actions)].map(a=>`<span class="act-pill">⚡ ${a}</span>`).join('');
   } else {
     banner.classList.add('hidden');
   }
 }
 
-// ── Sparkline ──
-function makeSpark(id, data, color){
-  const canvas = document.getElementById(id);
-  if(!canvas) return;
-  canvas.width  = canvas.parentElement.offsetWidth - 40 || 300;
-  canvas.height = 40;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const w=canvas.width, h=canvas.height;
-  const mn=Math.min(...data), mx=Math.max(...data), rng=mx-mn||1;
-  const pts = data.map((v,i)=>({ x:(i/(data.length-1))*w, y:h-((v-mn)/rng)*(h-6)-3 }));
-  // gradient fill
-  const g = ctx.createLinearGradient(0,0,0,h);
-  g.addColorStop(0, color+'33'); g.addColorStop(1, color+'00');
-  ctx.beginPath();
-  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
-  ctx.strokeStyle=color; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
-  ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
-  ctx.fillStyle=g; ctx.fill();
-}
-function drawSparks(){ 
-  // sparklines only kept in JS data buffers for chart updates; card canvases removed
+function drawSparks(){
+  // Card sparkline canvas removed intentionally
 }
 setTimeout(drawSparks, 100);
 window.addEventListener('resize', drawSparks);
 
-// ── History Log ──
 let histRows = [];
 function addRow(aq, ns, tp, hm){
   const now = new Date().toLocaleTimeString('en-GB');
-  const al = aqiLevel(aq); const nl = noiseLevel(ns);
-  const worst = (al.danger||nl.danger) ? 'bad' : (al.cls==='live-warn'||nl.cls==='live-warn') ? 'mod' : 'good';
-  const lbl   = {bad:'ALERT',mod:'CAUTION',good:'CLEAN'}[worst];
-  histRows.unshift({time:now, aq, ns, tp, hm, ac:al.label, nc:nl.label, ac_cls:'tag-'+(al.danger?'bad':al.cls==='live-warn'?'mod':'good'), nc_cls:'tag-'+(nl.danger?'bad':nl.cls==='live-warn'?'mod':'good'), cls:'tag-'+worst, lbl});
-  if(histRows.length>12) histRows.pop();
+  const al = aqiLevel(aq);
+  const nl = noiseLevel(ns);
+
+  const worst = (al.danger || nl.danger)
+    ? 'bad'
+    : (al.cls === 'live-warn' || nl.cls === 'live-warn')
+      ? 'mod'
+      : 'good';
+
+  const lbl = {bad:'ALERT', mod:'CAUTION', good:'CLEAN'}[worst];
+
+  histRows.unshift({
+    time:now,
+    aq,
+    ns,
+    tp,
+    hm,
+    ac:al.label,
+    nc:nl.label,
+    ac_cls:'tag-'+(al.danger ? 'bad' : al.cls==='live-warn' ? 'mod' : 'good'),
+    nc_cls:'tag-'+(nl.danger ? 'bad' : nl.cls==='live-warn' ? 'mod' : 'good'),
+    cls:'tag-'+worst,
+    lbl
+  });
+
+  if(histRows.length > 12) histRows.pop();
+
   document.getElementById('histBody').innerHTML = histRows.map(r=>`
     <tr>
       <td>${r.time}</td>
@@ -675,64 +676,98 @@ function addRow(aq, ns, tp, hm){
       <td><span class="tag ${r.ac_cls}">${r.ac}</span></td>
       <td><span class="tag ${r.nc_cls}">${r.nc}</span></td>
       <td><span class="tag ${r.cls}">${r.lbl}</span></td>
-    </tr>`).join('');
+    </tr>
+  `).join('');
 }
 
-// ── Charts ──
 const CD = {
-  responsive:true, animation:{duration:500},
-  plugins:{legend:{display:false}, tooltip:{
-    backgroundColor:'#0E1623', borderColor:'#1C2E45', borderWidth:1,
-    titleColor:'#3D5472', bodyColor:'#DCE8FF',
-    titleFont:{family:'Space Mono, monospace',size:9},
-    bodyFont:{family:'Space Mono, monospace',size:11}
-  }},
+  responsive:true,
+  animation:{duration:500},
+  plugins:{
+    legend:{display:false},
+    tooltip:{
+      backgroundColor:'#0E1623',
+      borderColor:'#1C2E45',
+      borderWidth:1,
+      titleColor:'#3D5472',
+      bodyColor:'#DCE8FF',
+      titleFont:{family:'Space Mono, monospace',size:9},
+      bodyFont:{family:'Space Mono, monospace',size:11}
+    }
+  },
   scales:{
-    x:{ ticks:{color:'#253B55',font:{family:'Space Mono, monospace',size:8},maxTicksLimit:8}, grid:{color:'rgba(28,46,69,0.5)'} },
-    y:{ ticks:{color:'#253B55',font:{family:'Space Mono, monospace',size:8}}, grid:{color:'rgba(28,46,69,0.5)'} }
+    x:{
+      ticks:{color:'#253B55',font:{family:'Space Mono, monospace',size:8},maxTicksLimit:8},
+      grid:{color:'rgba(28,46,69,0.5)'}
+    },
+    y:{
+      ticks:{color:'#253B55',font:{family:'Space Mono, monospace',size:8}},
+      grid:{color:'rgba(28,46,69,0.5)'}
+    }
   }
 };
 
 function buildChart(id, data, hex, label, minY){
   const ctx = document.getElementById(id).getContext('2d');
   const g = ctx.createLinearGradient(0,0,0,160);
-  g.addColorStop(0, hex+'55'); g.addColorStop(1, hex+'00');
+  g.addColorStop(0, hex+'55');
+  g.addColorStop(1, hex+'00');
+
   return new Chart(ctx,{
     type:'line',
-    data:{ labels:HOURS, datasets:[{ label, data:[...data], borderColor:hex, backgroundColor:g, borderWidth:2, pointRadius:0, pointHoverRadius:5, pointHoverBackgroundColor:hex, tension:0.4, fill:true }] },
-    options:{...CD, scales:{...CD.scales, y:{...CD.scales.y, min:minY}}}
+    data:{
+      labels:HOURS,
+      datasets:[{
+        label,
+        data:[...data],
+        borderColor:hex,
+        backgroundColor:g,
+        borderWidth:2,
+        pointRadius:0,
+        pointHoverRadius:5,
+        pointHoverBackgroundColor:hex,
+        tension:0.4,
+        fill:true
+      }]
+    },
+    options:{
+      ...CD,
+      scales:{
+        ...CD.scales,
+        y:{...CD.scales.y, min:minY}
+      }
+    }
   });
 }
 
-const aqiChart   = buildChart('aqiChart',   aqiHist,   '#7C6FFF', 'AQI',   0);
+const aqiChart   = buildChart('aqiChart', aqiHist, '#7C6FFF', 'AQI', 0);
 const noiseChart = buildChart('noiseChart', noiseHist, '#A8FF3E', 'dB(A)', 20);
 
-// ── Seed ──
 render(72, 54, 28, 62);
 addRow(72, 54, 28, 62);
 
-// ── MQTT Status Indicator ──
 function setMqttStatus(state){
   const el = document.getElementById('mqtt-status');
   if(!el) return;
+
   const styles = {
     connecting: { bg:'rgba(255,203,71,0.15)',  color:'#FFCB47', text:'⬤ CONNECTING…' },
     live:       { bg:'rgba(0,229,160,0.15)',   color:'#00E5A0', text:'⬤ MQTT LIVE'    },
     error:      { bg:'rgba(255,61,90,0.15)',   color:'#FF3D5A', text:'⬤ DISCONNECTED'  },
-    sim:        { bg:'rgba(124,111,255,0.15)', color:'#7C6FFF', text:'⬤ SIMULATION'    },
+    sim:        { bg:'rgba(124,111,255,0.15)', color:'#7C6FFF', text:'⬤ SIMULATION'    }
   };
+
   const s = styles[state] || styles.sim;
   el.style.background = s.bg;
   el.style.color      = s.color;
   el.textContent      = s.text;
 }
 
-// ── Central sensor update — called by MQTT or simulation ──
 function updateFromSensor(data){
-  if(data.aqi   !== undefined) cur.aqi   = parseFloat(data.aqi);
-  if(data.noise !== undefined) cur.noise = parseFloat(data.noise);
-  if(data.temp  !== undefined) cur.temp  = parseFloat(data.temp);
-  if(data.hum   !== undefined) cur.hum   = parseFloat(data.hum);
+  if(data.aqi   !== undefined && !isNaN(parseFloat(data.aqi)))   cur.aqi   = parseFloat(data.aqi);
+  if(data.noise !== undefined && !isNaN(parseFloat(data.noise))) cur.noise = parseFloat(data.noise);
+  if(data.temp  !== undefined && !isNaN(parseFloat(data.temp)))  cur.temp  = parseFloat(data.temp);
+  if(data.hum   !== undefined && !isNaN(parseFloat(data.hum)))   cur.hum   = parseFloat(data.hum);
 
   const aq = Math.round(cur.aqi);
   const ns = Math.round(cur.noise);
@@ -746,6 +781,7 @@ function updateFromSensor(data){
   sparks.noise.push(ns); sparks.noise.shift();
   sparks.temp.push(tp);  sparks.temp.shift();
   sparks.hum.push(hm);   sparks.hum.shift();
+
   drawSparks();
 
   aqiChart.data.datasets[0].data[23]   = aq;
@@ -754,22 +790,18 @@ function updateFromSensor(data){
   noiseChart.update('none');
 }
 
-// ── MQTT — Live data from Wokwi ESP32 ──
-// Wokwi sketch: https://wokwi.com/projects/458182570048285697
-// Hardware    : ESP32 + Gas sensor on pin 34
-// Publishes   : topic "cityguard/gas"  →  { "aqi": <number> }
-// Note        : Wokwi uses port 1883 (TCP). Browsers must use port 8884 (WSS).
-//               HiveMQ public broker supports both — same data, different port.
+// Publishes: topic "cityguard/gas" -> {"aqi": number, "noise": number, "temp": number, "hum": number}
+// Browser uses HiveMQ WSS on port 8884
 
 let mqttConnected = false;
-let simInterval   = null;
+let simInterval = null;
 
 const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt", {
   clientId: 'cityguard_dash_' + Math.random().toString(16).slice(2, 8),
   clean: true,
   reconnectPeriod: 4000,
   connectTimeout: 8000,
-  protocol: 'wss',
+  protocol: 'wss'
 });
 
 client.on("connect", () => {
@@ -777,14 +809,18 @@ client.on("connect", () => {
   setMqttStatus('live');
   console.log("[CityGuard] ✓ Connected to HiveMQ broker");
 
-  // Only subscribe to the exact topic your Wokwi publishes to
   client.subscribe("cityguard/gas", { qos: 0 }, (err) => {
-    if(err) console.error("[CityGuard] Subscribe failed:", err);
-    else    console.log("[CityGuard] ✓ Subscribed to cityguard/gas");
+    if(err) {
+      console.error("[CityGuard] Subscribe failed:", err);
+    } else {
+      console.log("[CityGuard] ✓ Subscribed to cityguard/gas");
+    }
   });
 
-  // Stop simulation — real hardware data incoming
-  if(simInterval){ clearInterval(simInterval); simInterval = null; }
+  if(simInterval){
+    clearInterval(simInterval);
+    simInterval = null;
+  }
 });
 
 client.on("message", (topic, message) => {
@@ -793,16 +829,17 @@ client.on("message", (topic, message) => {
 
   try {
     const data = JSON.parse(raw);
+    console.log("[CityGuard] Full sensor data from hardware:", data);
 
-    // Your Wokwi sketch only sends { "aqi": value }
-    // noise, temp, hum stay as simulated values until you add those sensors
-    if(data.aqi !== undefined){
-      console.log("[CityGuard] Gas AQI from hardware:", data.aqi);
-      updateFromSensor({ aqi: data.aqi });
-    }
+    updateFromSensor({
+      aqi: data.aqi,
+      noise: data.noise,
+      temp: data.temp,
+      hum: data.hum
+    });
 
   } catch(e) {
-    console.warn("[CityGuard] Could not parse message:", raw);
+    console.warn("[CityGuard] Could not parse message:", raw, e);
   }
 });
 
@@ -826,32 +863,34 @@ client.on("offline", () => {
   startSimulation();
 });
 
-// ── Simulation fallback ──
-// Keeps dashboard alive when Wokwi is not running.
-// AQI switches to real hardware value the moment ESP32 publishes.
 function startSimulation(){
   if(simInterval) return;
+
   setMqttStatus('sim');
   console.log("[CityGuard] Simulation mode — waiting for Wokwi ESP32…");
+
   simInterval = setInterval(()=>{
-    if(mqttConnected){ clearInterval(simInterval); simInterval = null; return; }
-    cur.aqi   = Math.max(30,  Math.min(300, cur.aqi   + (Math.random()-0.47)*9));
-    cur.noise = Math.max(30,  Math.min(95,  cur.noise + (Math.random()-0.47)*5));
-    cur.temp  = Math.max(15,  Math.min(42,  cur.temp  + (Math.random()-0.50)*0.8));
-    cur.hum   = Math.max(20,  Math.min(95,  cur.hum   + (Math.random()-0.50)*1.2));
+    if(mqttConnected){
+      clearInterval(simInterval);
+      simInterval = null;
+      return;
+    }
+
+    cur.aqi   = Math.max(30, Math.min(300, cur.aqi   + (Math.random()-0.47)*9));
+    cur.noise = Math.max(30, Math.min(95,  cur.noise + (Math.random()-0.47)*5));
+    cur.temp  = Math.max(15, Math.min(42,  cur.temp  + (Math.random()-0.50)*0.8));
+    cur.hum   = Math.max(20, Math.min(95,  cur.hum   + (Math.random()-0.50)*1.2));
+
     updateFromSensor({});
   }, 3000);
 }
 
-// Start simulation now; ESP32 takes over automatically when Wokwi runs
 startSimulation();
 
-// AI confidence drift
 setInterval(()=>{
   document.getElementById('ai-conf').textContent = Math.floor(80+Math.random()*14)+'%';
 }, 10000);
 
-// ── Rotating Pollution Reduction Tips ──
 const TIP_SETS = [
   [
     'Use public transport or carpool — vehicle exhaust is the #1 urban air pollutant',
@@ -898,14 +937,16 @@ const TIP_SETS = [
 ];
 
 let tipSetIndex = 0;
-let tipCountdown = 120; // 2 minutes in seconds
+let tipCountdown = 120;
 
 function renderTips(index){
   const list = document.getElementById('tipList');
   if(!list) return;
+
   const set = TIP_SETS[index % TIP_SETS.length];
   list.style.opacity = '0';
   list.style.transition = 'opacity 0.5s ease';
+
   setTimeout(()=>{
     list.innerHTML = set.map(t=>`<li>${t}</li>`).join('');
     list.style.opacity = '1';
@@ -915,10 +956,13 @@ function renderTips(index){
 function updateTipTimer(){
   const el = document.getElementById('tip-timer');
   if(!el) return;
+
   const m = Math.floor(tipCountdown/60);
   const s = tipCountdown % 60;
   el.textContent = `next in ${m}:${String(s).padStart(2,'0')}`;
+
   tipCountdown--;
+
   if(tipCountdown < 0){
     tipSetIndex++;
     renderTips(tipSetIndex);
